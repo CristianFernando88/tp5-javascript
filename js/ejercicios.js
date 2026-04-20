@@ -38,8 +38,7 @@ const aprobados = filtrarAprobados(alumnos);
 console.log(aprobados);
 
 /* (c)formatearAlumnos(alumnos): recibe el mismo array y retorna un array de strings "Nombre: X
-- Nota: Y" usando map(), (d) buscarAlumno(alumnos, nombre): usa find() para buscar
-por nombre. Cada función debe estar probada con console.log(). */
+- Nota: Y" usando map()*/
 
 const formatearAlumnos = (alumnos)=>{
     return alumnos.map(alumno=>{
@@ -49,3 +48,13 @@ const formatearAlumnos = (alumnos)=>{
 
 console.log(formatearAlumnos(aprobados));
 console.log(formatearAlumnos(alumnos));
+
+/* (d) buscarAlumno(alumnos, nombre): usa find() para buscar
+por nombre. Cada función debe estar probada con console.log() */
+
+const buscarAlumno = (alumnos,nombre)=>{
+    return alumnos.find(alumno=>alumno.nombre==nombre)
+}
+
+const alumno_buscado = buscarAlumno(alumnos,"Alejo");
+console.log(alumno_buscado);
