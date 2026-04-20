@@ -36,3 +36,7 @@ const filtrarAprobados = (alum)=>{
 const aprobados = filtrarAprobados(alumnos);
 
 console.log(aprobados);
+
+/* (c)formatearAlumnos(alumnos): recibe el mismo array y retorna un array de strings "Nombre: X
+- Nota: Y" usando map(), (d) buscarAlumno(alumnos, nombre): usa find() para buscar
+por nombre. Cada función debe estar probada con console.log(). */
