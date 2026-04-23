@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Enlaza Font Awesome en tu index.html -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #1a1a2e;
+            --color-secondary: #16213e;
+            --color-accent: #0f3460;
+            --color-highlight: #e94560;
+            --color-text: #eeeeee;
+            --color-background: #f5f5f5;
+            --color-card: #ffffff;
+        }
+
+        /* Aplicando a tu página de productos */
+        body {
+            background-color: var(--color-background);
+            color: var(--color-primary);
+        }
+        .cards-container{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            background-color: var(--color-background);
+        }
+        .product-card{
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            height: 300px;
+            background-color: var(--color-card);
+            border-radius: 10px;
+            margin:12px;
+        
+        }
+        .card-title{
+            text-align: center;
+            background-color: var(--color-accent);
+            color: var(--color-text);
+            margin: 10px;
+            border-radius:5px;
+        }
+        .card-body{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        
+    </header>
+    <main>
+        <h1>Productos</h1>
+        <div>
+            <select name="select-categoria" id="select-categoria">
+                <option value="0">seleccione un categoria</option>
+                <option value="Electrónica">Electrónica</option>
+                <option value="Accesorios">Accesorios</option>
+                <option value="Muebles">Muebles</option>
+            </select>
+            <div>
+                <input type="range" id="precioRange" min="0" max="1000000" value="1000000" step="5000">
+                <span>Precio máximo: $<span id="valorPrecio">100000</span></span>
+            </div>
+            <div>
+                <input type="text" name="inputSearch" id="inputSearch">
+            </div>
+        </div>
+        <div class="cards-container" id="container-cards">
+            
+        </div>
+    </main>
+    <footer>
+        
+    </footer>
+    <script>
+        const productos = [
+        { id: 1, nombre: "Laptop Gaming", precio: 850000, categoria: "Electrónica", enStock: true },
+        { id: 2, nombre: "Mouse Inalámbrico", precio: 25000, categoria: "Accesorios", enStock: true },
+        { id: 3, nombre: "Teclado Mecánico", precio: 65000, categoria: "Accesorios", enStock: false },
+        { id: 4, nombre: "Monitor 24''", precio: 210000, categoria: "Electrónica", enStock: true },
+        { id: 5, nombre: "Silla Gamer", precio: 280000, categoria: "Muebles", enStock: true },
+        { id: 6, nombre: "Auriculares Bluetooth", precio: 45000, categoria: "Accesorios", enStock: false },
+        { id: 7, nombre: "Webcam 4K", precio: 89000, categoria: "Electrónica", enStock: true },
+        { id: 8, nombre: "Micrófono USB", precio: 55000, categoria: "Accesorios", enStock: true }
+        ];
+
+        const productosFiltrados=[];
+
+        const crearCardProducto=(producto)=>{
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.innerHTML=`
+                <h2>${producto.nombre}</h2>
+                <div>
+                    <span>${producto.precio}</span>
+                    <p>${producto.categoria}</p>
+                </div>
+            `
+            return card;
+        }
+        
+       const cargarCardsProducto = (productos)=>{
+                const contenedor = document.getElementById("container-cards");
+                contenedor.innerHTML="";
+            
+                contenedor.innerHTML = productos.map(producto=>`
+                <div class="product-card">
+                    <div class="card-title">
+                        <h2>${producto.nombre}</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>$<span>${producto.precio}</span></p>
+                        <p>${producto.categoria}</p>
+                        <p>${producto.enStock?"Disponible":"Sin Stock"}
+                    </div>
+                </div>
+                `).join("");
+                
+            }
+        
+        const select = document.getElementById("select-categoria");
+
+        select.addEventListener("change",()=>{
+            let seleccion = select.value;
+            if(seleccion!=0){
+                let productos_filtrados = productos.filter(prod=>prod.categoria==seleccion);
+                cargarCardsProducto(productos_filtrados)
+            }else{
+                cargarCardsProducto(productos)
+            }
+            
+            console.log(selection);
+        })
+
+        const precio_range = document.getElementById("precioRange");
+        const valor_precio = document.getElementById("valorPrecio");
+
+        const filtrarPrecio = (precio)=>{
+            const productos_f = productos.filter(prod=>prod.precio<=precio);
+            cargarCardsProducto(productos_f); 
+        }
+
+        precio_range.addEventListener("input",(e)=>{
+            const precio = e.target.value;
+            valor_precio.textContent = precio;
+            filtrarPrecio(precio);
+        })
+
+        const input_search = document.getElementById("inputSearch");
+        const filtrarNombre = (nombre)=>{
+            nombre = nombre.toLowerCase();
+            const productos_n = productos.filter(prod=>prod.nombre.toLowerCase().includes(nombre));
+            cargarCardsProducto(productos_n);
+        }
+        input_search.addEventListener("input",(e)=>{
+            let nombreProducto = e.target.value;
+            filtrarNombre(nombreProducto);
+        })
+
+        cargarCardsProducto(productos);
+    </script>
+</body>
+</html>
