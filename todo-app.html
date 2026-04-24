@@ -85,8 +85,15 @@
     <main>
         <section class="container">
             <h1>Lista de tareas</h1>
+            <div>
+                <form action="" class="">
+                    <input type="text" id="tituloTarea" placeholder="Nueva tarea" required>
+                    <button type="submit" class="button" onclick="agregarTarea(event)">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </form>
+            </div>
             <div class="container-tareas" id="container-tareas">
-                
             </div>
         </section>
     </main>
@@ -132,6 +139,19 @@
 
         const eliminarTarea = (id)=>{
             tareas = tareas.filter(tarea=>tarea.id != id);
+            cargarTareas();
+        }
+        const agregarTarea = (e)=>{
+            e.preventDefault();
+            const inputTitulo = document.getElementById("tituloTarea");
+            if(inputTitulo.value.trim() === "") return;
+            const nuevaTarea = {
+                id: Date.now(),
+                titulo: inputTitulo.value,
+                completada: false
+            }
+            tareas.push(nuevaTarea);
+            inputTitulo.value = "";
             cargarTareas();
         }
         cargarTareas();
