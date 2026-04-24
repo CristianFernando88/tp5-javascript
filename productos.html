@@ -15,6 +15,7 @@
         }
 
         :root {
+            /* Colores existentes */
             --color-primary: #1a1a2e;
             --color-secondary: #16213e;
             --color-accent: #0f3460;
@@ -22,12 +23,52 @@
             --color-text: #eeeeee;
             --color-background: #f5f5f5;
             --color-card: #ffffff;
+            
+            /* Estados de productos (solo lo necesario) */
+            --color-success: #10b981;      /* Verde - Disponible */
+            --color-warning: #f59e0b;      /* Amarillo - Advertencia */
+            --color-error: #ef4444;        /* Rojo - Sin stock */
+            --color-info: #3b82f6;         /* Azul - Información */
         }
 
         /* Aplicando a tu página de productos */
         body {
             background-color: var(--color-background);
             color: var(--color-primary);
+        }
+        main{
+            padding: 20px;
+        }
+        .filters-container{
+            display: flex;
+            justify-content: center;
+            margin: 20px;
+            gap: 10px;
+            background-color: var(--color-card);
+        }
+        .filter-categoria, .filter-range, .filter-name{
+            
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .filter-categoria select{
+            padding: 5px;
+            width: 200px;
+        }
+
+        .filter-name input{
+            padding: 5px;
+            width: 200px;
+        }
+        .filter-range{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .filter-range .value-range-selected{
+            display: flex;
+            align-items: center;
         }
         .cards-container{
             display: flex;
@@ -42,8 +83,15 @@
             height: 300px;
             background-color: var(--color-card);
             border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin:12px;
-        
+            transition: transform 0.3s, box-shadow 0.3s;
+    
+        }
+
+        .product-card:hover{
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
         .card-title{
             text-align: center;
@@ -53,29 +101,50 @@
             border-radius:5px;
         }
         .card-body{
+            display: flex;
+            flex-direction: column;
             text-align: center;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        .card-footer{
+            text-align: center;
+            margin-top: auto;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
     <header>
-        
+        <h1 class="title">TP5 JAVASCRIPT - Barrios Cristian Fernando</h1>
     </header>
     <main>
         <h1>Productos</h1>
-        <div>
-            <select name="select-categoria" id="select-categoria">
-                <option value="0">seleccione un categoria</option>
+        <div class="filters-container">
+            
+            <div class="filter-categoria">
+                <i class="fa-solid fa-layer-group"></i>
+                <select name="select-categoria" id="select-categoria">
+                <option value="">seleccione un categoria</option>
                 <option value="Electrónica">Electrónica</option>
                 <option value="Accesorios">Accesorios</option>
                 <option value="Muebles">Muebles</option>
             </select>
-            <div>
-                <input type="range" id="precioRange" min="0" max="1000000" value="1000000" step="5000">
-                <span>Precio máximo: $<span id="valorPrecio">100000</span></span>
             </div>
-            <div>
+            
+            <div class="filter-range">
+                
+                <div class="value-range-selected">
+                    <i class="fa-solid fa-dollar-sign"></i>
+                    <input type="range" id="precioRange" min="0" max="1000000" value="1000000" step="5000">
+                    <span>precio: $<span id="valorPrecioActual">0</span></span>
+                </div>
+                <span>Máx.: $<span id="valorPrecioMaximo">100000</span></span>
+            </div>
+            <div class="filter-name">
                 <input type="text" name="inputSearch" id="inputSearch">
+                <i class="fa-brands fa-sistrix"></i>
             </div>
         </div>
         <div class="cards-container" id="container-cards">
@@ -97,7 +166,8 @@
         { id: 8, nombre: "Micrófono USB", precio: 55000, categoria: "Accesorios", enStock: true }
         ];
 
-        const productosFiltrados=[];
+        //let productos_filtrados=[];
+        
 
         const crearCardProducto=(producto)=>{
             const card = document.createElement("div");
@@ -124,7 +194,12 @@
                     <div class="card-body">
                         <p>$<span>${producto.precio}</span></p>
                         <p>${producto.categoria}</p>
-                        <p>${producto.enStock?"Disponible":"Sin Stock"}
+                    </div>
+                    <div class="card-footer">
+                        ${producto.enStock ?
+                            `<span style="color:green;">En Stock</span>`:
+                            `<span style="color:red;">Agotado</span>`
+                        }
                     </div>
                 </div>
                 `).join("");
@@ -132,45 +207,80 @@
             }
         
         const select = document.getElementById("select-categoria");
-
-        select.addEventListener("change",()=>{
-            let seleccion = select.value;
-            if(seleccion!=0){
-                let productos_filtrados = productos.filter(prod=>prod.categoria==seleccion);
-                cargarCardsProducto(productos_filtrados)
-            }else{
-                cargarCardsProducto(productos)
-            }
-            
-            console.log(selection);
-        })
-
         const precio_range = document.getElementById("precioRange");
-        const valor_precio = document.getElementById("valorPrecio");
+        const valor_precio_maximo = document.getElementById("valorPrecioMaximo");
+        const valor_precio_actual = document.getElementById("valorPrecioActual");
+        const input_search = document.getElementById("inputSearch");
 
-        const filtrarPrecio = (precio)=>{
-            const productos_f = productos.filter(prod=>prod.precio<=precio);
-            cargarCardsProducto(productos_f); 
+        const actualizarPrecioMaximo = (productos)=>{
+            console.log("actualizando precio maximo");
+            let precio_maximo=productos.reduce((max,prod)=>prod.precio>max?prod.precio:max,0);
+            console.log(precio_maximo);
+            console.log(precio_range);
+            valor_precio_maximo.textContent = precio_maximo;
+            precio_range.setAttribute('max', precio_maximo);
+            valor_precio_actual.textContent = precio_range.value > precio_maximo ? precio_maximo : precio_range.value;
+        };
+        
+
+        const filtrarPorCategoria = (productos, categoria) => {
+            if (!categoria) return productos;
+            let productos_filtrados = productos.filter(prod => prod.categoria === categoria);
+            return productos_filtrados;
         }
+
+        const filtrarPorPrecio = (productos, precioMax) => {
+            if (!precioMax) return productos;
+            return productos.filter(prod => prod.precio <= parseInt(precioMax));
+        }
+
+        const filtrarPorNombre = (productos, nombre) => {
+            if (!nombre) return productos;
+            const nombreLower = nombre.toLowerCase();
+            return productos.filter(prod => 
+                prod.nombre.toLowerCase().includes(nombreLower)
+            );
+        }
+
+        const filtradoGeneral = () => {
+            const categoria = select.value;
+            const precioMax = precioRange.value;
+            const nombre = inputSearch.value;
+            let productosFiltrados = [...productos]; 
+            //actualizarPrecioMaximo(productosFiltrados);
+            productosFiltrados = filtrarPorCategoria(productosFiltrados, categoria);
+            productosFiltrados = filtrarPorNombre(productosFiltrados, nombre);
+            actualizarPrecioMaximo(productosFiltrados);
+            productosFiltrados = filtrarPorPrecio(productosFiltrados, precioMax);
+            
+            
+            /* actualizarMaximoRange(productosFiltrados); */
+            
+            
+            cargarCardsProducto(productosFiltrados);
+        }
+
+
+        select.addEventListener("change",(e)=>{
+            let seleccion = e.target.value;
+            filtradoGeneral()
+        })
 
         precio_range.addEventListener("input",(e)=>{
             const precio = e.target.value;
-            valor_precio.textContent = precio;
-            filtrarPrecio(precio);
+            valor_precio_actual.textContent = precio;
+            filtradoGeneral();
         })
 
-        const input_search = document.getElementById("inputSearch");
-        const filtrarNombre = (nombre)=>{
-            nombre = nombre.toLowerCase();
-            const productos_n = productos.filter(prod=>prod.nombre.toLowerCase().includes(nombre));
-            cargarCardsProducto(productos_n);
-        }
         input_search.addEventListener("input",(e)=>{
-            let nombreProducto = e.target.value;
-            filtrarNombre(nombreProducto);
+            filtradoGeneral();
         })
-
-        cargarCardsProducto(productos);
+        window.addEventListener("load",()=>{
+            
+            filtradoGeneral();
+            
+        })
+        
     </script>
 </body>
 </html>
