@@ -1,8 +1,11 @@
 let datosCache = [];
 const contenedor = document.getElementById("contenedor-cards");
-const mostrarLoading = (texto)=>{
-    contenedor.innerHTML = texto;
-    
+const mostrarLoading = (texto) => {
+    contenedor.innerHTML = `<div class="loading">${texto}</div>`;
+}
+
+const mostrarError = (error) => {
+    contenedor.innerHTML = `<div class="error-message">${error}</div>`;
 }
 
 const renderizarCards=(datos)=>{
@@ -28,7 +31,7 @@ const renderizarCards=(datos)=>{
     
 }
 
-const cargarRickAndMorty = async () => {
+const cargarData = async () => {
   /* mostrarLoading("Cargando personajes de Rick and Morty..."); */
 //console.log("Cargando personajes de Rick and Morty...");
     mostrarLoading("Cargando personajes de Rick and Morty...");
@@ -43,13 +46,12 @@ const cargarRickAndMorty = async () => {
     datosCache = data.results;
     renderizarCards(datosCache);
     console.log(datosCache);
-    //renderRickAndMorty(datosCache);
 
   } catch (error) {
     // (f) mostrar error visible
     mostrarError(`No se pudieron cargar los personajes: ${error.message}`);
   }
 };
-cargarRickAndMorty();
+cargarData();
 console.log("api-demo");
 console.log(datosCache);
