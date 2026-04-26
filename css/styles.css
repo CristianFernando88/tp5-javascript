@@ -203,13 +203,15 @@ footer {
 .card-title {
     text-align: center;
     background-color: var(--color-accent);
-    color: var(--color-text);
+    color: var(--color-text) !important;  
     padding: 12px;
 }
 
-.card-title h2, .card-title h3 {
+.card-title h2, 
+.card-title h3 {
     font-size: 1.1rem;
     margin: 0;
+    color: var(--color-text);  
 }
 
 /* Card body */
