@@ -526,3 +526,33 @@ input[type="checkbox"] {
         padding: 30px;
     }
 }
+/* Estilos para íconos en tareas */
+.tarea div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.tarea:hover {
+    box-shadow: var(--shadow-md);
+    background-color: var(--color-card);
+}
+
+.tarea div i {
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tarea div i:hover {
+    transform: scale(1.1);
+}
+
+.tarea h3 {
+    cursor: pointer;
+    margin: 0;
+    transition: var(--transition);
+}
+
+.tarea h3:hover {
+    transform: translateX(3px);
+}

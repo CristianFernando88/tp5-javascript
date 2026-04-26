@@ -17,52 +17,92 @@ const actualizarContador = () => {
     contador.innerText = `Pendientes: ${pendientes}`;
 }
 
-const crearTareaHTML = (tarea)=>{
-    return `
-        <div class="tarea ">
-            <div>
-                <h3 class="${tarea.completada ? 'tarea-completada' : ''}">${tarea.titulo}</h3>
-                <input type="checkbox" onchange="toggleTarea(${tarea.id})" ${tarea.completada ? 'checked' : ''}>
-            </div>
-            <button class="button" onclick="eliminarTarea(${tarea.id})">
-                <i class="fa-solid fa-trash-can"></i>
-            </button>
-        </div>
-    `;
-}
-const cargarTareas = ()=>{
-    containerTareas.innerHTML = "";
-    tareas.map(tarea=>{
-        containerTareas.innerHTML += crearTareaHTML(tarea);
-    }).join("");
-    actualizarContador();
-}
-
-const toggleTarea = (id)=>{
-    tareas = tareas.map(tarea=>{
-        if(tarea.id == id){
-            return {...tarea, completada: !tarea.completada};
+const toggleTarea = (tituloElement, id) => {
+    tituloElement.classList.toggle("tarea-completada");
+    const completada = tituloElement.classList.contains("tarea-completada");
+    tareas = tareas.map(tarea => {
+        if (tarea.id === id) {
+            return {...tarea, completada: completada};
         }
         return tarea;
     });
-    cargarTareas();
+    actualizarContador();
 }
 
-const eliminarTarea = (id)=>{
-    tareas = tareas.filter(tarea=>tarea.id != id);
-    cargarTareas();
+const eliminarTarea = (divTarea, id) => {
+    divTarea.remove();
+    tareas = tareas.filter(tarea => tarea.id !== id);
+    actualizarContador();
 }
-const agregarTarea = (e)=>{
+
+const crearTarea = (tarea) => {
+    const divTarea = document.createElement("div");
+    divTarea.classList.add("tarea");
+    
+    const divContenido = document.createElement("div");
+    
+    const titulo = document.createElement("h3");
+    const icono = tarea.completada ? '✓' : '○';
+    titulo.innerHTML = `${icono} ${tarea.titulo}`;
+    
+    if (tarea.completada) {
+        titulo.classList.add("tarea-completada");
+    }
+    
+    const handleClick = () => {
+        titulo.classList.toggle("tarea-completada");
+        const estaCompletada = titulo.classList.contains("tarea-completada");
+        const nuevoIcono = estaCompletada ? '✓' : '○';
+        titulo.innerHTML = `${nuevoIcono} ${tarea.titulo}`;
+        
+        tareas = tareas.map(t => {
+            if (t.id === tarea.id) {
+                return {...t, completada: estaCompletada};
+            }
+            return t;
+        });
+        actualizarContador();
+    };
+    
+    titulo.onclick = handleClick;
+    divContenido.appendChild(titulo);
+    
+    const boton = document.createElement("button");
+    boton.className = "button";
+    boton.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+    boton.onclick = () => eliminarTarea(divTarea, tarea.id);
+    
+    divTarea.appendChild(divContenido);
+    divTarea.appendChild(boton);
+    
+    return divTarea;
+}
+
+const cargarTareas = () => {
+    containerTareas.innerHTML = "";
+    tareas.forEach(tarea => {
+        containerTareas.appendChild(crearTarea(tarea));
+    });
+    actualizarContador();
+}
+
+const agregarTarea = (e) => {
     e.preventDefault();
     const inputTitulo = document.getElementById("tituloTarea");
     if(inputTitulo.value.trim() === "") return;
+    
     const nuevaTarea = {
         id: Date.now(),
         titulo: inputTitulo.value,
         completada: false
     }
     tareas.push(nuevaTarea);
+    containerTareas.appendChild(crearTarea(nuevaTarea));
     inputTitulo.value = "";
-    cargarTareas();
+    actualizarContador();
 }
+
+// Esto debe ir UNA sola vez
+document.getElementById("todo-form").addEventListener("submit", agregarTarea);
+
 cargarTareas();
