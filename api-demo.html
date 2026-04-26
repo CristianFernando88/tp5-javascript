@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Enlaza Font Awesome en tu index.html -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>TP 5</title>
     <style>
         *{
@@ -139,6 +142,45 @@
             margin: 40px auto;
             max-width: 500px;
         }
+
+        /* Contenedor de búsqueda */
+        .search-container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid var(--color-accent);
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #searchInput:focus {
+            border-color: var(--color-highlight);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
+        }
+
+        .search-message {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--color-accent);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--color-primary);
+            background-color: var(--color-card);
+            border-radius: 12px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
     </style>
 </head>
 <body>
@@ -148,6 +190,10 @@
     <main>
         <section>
             <h1>Api demo</h1>
+            <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar personaje (mínimo 3 caracteres)...">
+            <div id="searchMessage" class="search-message"></div>
+            </div>
             <div class="cards-container" id="contenedor-cards">
 
             </div>
