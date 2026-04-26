@@ -4,6 +4,19 @@ let tareas = [
     {id:3, titulo:"Estudiar para el examen", completada:false}
 ];
 const containerTareas = document.getElementById("container-tareas");
+
+// Contador
+const actualizarContador = () => {
+    let pendientes = tareas.filter(t => !t.completada).length;
+    let contador = document.getElementById("contador");
+    if (!contador) {
+        contador = document.createElement("p");
+        contador.id = "contador";
+        document.querySelector("form").after(contador);
+    }
+    contador.innerText = `Pendientes: ${pendientes}`;
+}
+
 const crearTareaHTML = (tarea)=>{
     return `
         <div class="tarea ">
@@ -22,6 +35,7 @@ const cargarTareas = ()=>{
     tareas.map(tarea=>{
         containerTareas.innerHTML += crearTareaHTML(tarea);
     }).join("");
+    actualizarContador();
 }
 
 const toggleTarea = (id)=>{
